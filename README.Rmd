@@ -56,8 +56,8 @@ In that case, don't forget to commit and push the resulting figure files, so the
 
 - Funções
   - Funções projetadas para formatar e ajustar a apresentação de valores numéricos
-    - retorne_p
-    - rround
+    - pval_string -> Esta função formata valores de p, permitindo uma apresentação mais clara e consistente dos resultados estatísticos. Isso é particularmente útil para apresentar resultados em artigos científicos ou relatórios, onde a precisão e a clareza na comunicação dos valores de p são essenciais.
+    - num_string -> Essa função é usada para arredondar valores numéricos com diferentes critérios, dependendo da magnitude do valor. Ela parece ser útil em contextos onde valores pequenos e grandes precisam ser apresentados de forma que sejam facilmente compreensíveis
   - Funções para a criação e personalização de tabelas cruzadas
     - Dados Categorico:
       - cont
