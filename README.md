@@ -52,21 +52,26 @@ In that case, don’t forget to commit and push the resulting figure
 files, so they display on GitHub and CRAN.
 
 - Funções
+
   - Funções projetadas para formatar e ajustar a apresentação de valores
     numéricos
+
     - pval_string -\> Esta função formata valores de p, permitindo uma
       apresentação mais clara e consistente dos resultados estatísticos.
       Isso é particularmente útil para apresentar resultados em artigos
       científicos ou relatórios, onde a precisão e a clareza na
       comunicação dos valores de p são essenciais.
+
     - num_string -\> Essa função é usada para arredondar valores
       numéricos com diferentes critérios, dependendo da magnitude do
       valor. Ela parece ser útil em contextos onde valores pequenos e
       grandes precisam ser apresentados de forma que sejam facilmente
-      compreensíveis
+      compreensíveis.
+
   - Funções para a criação e personalização de tabelas cruzadas
+
     - Dados Categorico:
-      - cont
+      - count_table
       - conti
     - Dados Númerico:
       - shapiro_test
@@ -78,11 +83,24 @@ files, so they display on GitHub and CRAN.
       - summary_numerico_por_grupo_parametrico
       - summary_numerico_por_grupo_n_parametrico
       - summary_numerico_por_grupo
+
   - Funções relacionadas à análise de modelos univariados e
     multivariados
+
     - analise_mod
     - metricas_de_avaliacao_glm
     - metricas_de_avaliacao_regressao
+
   - Funções para criação de Cross Tables
+
     - cross_table
     - cross_table_glm
+
+``` r
+pacman::p_load(
+dplyr, # manipulação de dados
+magrittr, # operador pipe line %>%
+janitor, # tabela de contigencia => tabyl, adorn_pct_formatting, adorn_totals, adorn_percentages, adorn_ns
+effsize # tamanho do efeito d'cohen
+)
+```
