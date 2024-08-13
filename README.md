@@ -62,7 +62,7 @@ files, so they display on GitHub and CRAN.
       científicos ou relatórios, onde a precisão e a clareza na
       comunicação dos valores de p são essenciais.
 
-    - num_string -\> Essa função é usada para arredondar valores
+    - num_string -\> Esta função é usada para arredondar valores
       numéricos com diferentes critérios, dependendo da magnitude do
       valor. Ela parece ser útil em contextos onde valores pequenos e
       grandes precisam ser apresentados de forma que sejam facilmente

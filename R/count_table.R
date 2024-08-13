@@ -1,5 +1,12 @@
+# Tabela contagem simples
+freq_table = function(df, variavel){
+  df %>% tabyl(.data[[variavel]], show_na = FALSE) %>%
+    adorn_pct_formatting(2) %>% as.data.frame()
+}
+
+
 # Função que verifica se é melhor aplicavel o teste de fisher para testar a hipotese entre duas variaveis categoricas
-fisher_criterio = function(df, var1, var2){
+is_fisher_applicable = function(df, var1, var2){
   length1 = length(levels(as.factor(df[[var1]])))
   length2 = length(levels(as.factor(df[[var2]])))
   if (length1 >= 3 || length2 >= 3){
@@ -36,7 +43,7 @@ count_table = function(df, var_y, var_x, sentido_percent='col', apenas_fisher=F)
   #Aplicando teste de hipotese adequado
   tabela[["P-value"]] = NA
   tabela[["Test_Used"]] = NA
-  if(fisher_criterio(df, var_y, var_x) == F){
+  if(is_fisher_applicable(df, var_y, var_x) == F){
     if (nrow(tabela) <= 3 && apenas_fisher == T){
       tabela[["P-value"]][1] = retorne_p(fisher.test(df[[var_x]],df[[var_y]])$p.value)
       tabela[["Test_Used"]][1] = "Fisher Exact"}
