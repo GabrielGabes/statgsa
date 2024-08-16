@@ -7,7 +7,7 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(GSAStat)
+library(statgsa)
 
 # Dependencias Obrigatorias
 library(stats)
@@ -25,4 +25,4 @@ library(MuMIn)
 library(magrittr)
 library(tidyr)
 
-test_check("GSAStat")
+test_check("statgsa")
