@@ -1,34 +1,34 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# GSAStat
+# statgsa
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of GSAStat is to …
+The goal of statgsa is to …
 
 ## Installation
 
-You can install the development version of GSAStat from
+You can install the development version of statgsa from
 [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("pak")
-pak::pak("GabrielGabes/GSAStat")
+pak::pak("GabrielGabes/statgsa")
 #> ℹ Loading metadata database✔ Loading metadata database ... done
 #>  
-#> → Will update 1 package.
+#> → Will install 1 package.
 #> → Will download 1 package with unknown size.
-#> + GSAStat 0.0.0.9000 → 0.0.0.9000 [bld][cmp][dl] (GitHub: 7f9ae19)
+#> + statgsa   0.0.0.9000 [bld][cmp][dl] (GitHub: dfafb62)
 #> ℹ Getting 1 pkg with unknown size
-#> ✔ Got GSAStat 0.0.0.9000 (source) (52.04 kB)
-#> ℹ Packaging GSAStat 0.0.0.9000
-#> ✔ Packaged GSAStat 0.0.0.9000 (1.1s)
-#> ℹ Building GSAStat 0.0.0.9000
-#> ✔ Built GSAStat 0.0.0.9000 (7.4s)
-#> ✔ Installed GSAStat 0.0.0.9000 (github::GabrielGabes/GSAStat@7f9ae19) (102ms)
-#> ✔ 1 pkg + 113 deps: kept 94, upd 1, dld 1 (NA B) [16.8s]
+#> ✔ Got statgsa 0.0.0.9000 (source) (55.42 kB)
+#> ℹ Packaging statgsa 0.0.0.9000
+#> ✔ Packaged statgsa 0.0.0.9000 (895ms)
+#> ℹ Building statgsa 0.0.0.9000
+#> ✔ Built statgsa 0.0.0.9000 (6.4s)
+#> ✔ Installed statgsa 0.0.0.9000 (github::GabrielGabes/statgsa@dfafb62) (82ms)
+#> ✔ 1 pkg + 113 deps: kept 94, added 1, dld 1 (NA B) [15.7s]
 ```
 
 ## Example
@@ -36,7 +36,7 @@ pak::pak("GabrielGabes/GSAStat")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-# library(GSAStat)
+# library(statgsa)
 ## basic example code
 ```
 
@@ -81,37 +81,37 @@ head(birthwt)
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("GabrielGabes/GSAStat")
+remotes::install_github("GabrielGabes/statgsa")
 #> Using GitHub PAT from the git credential store.
-#> Skipping install of 'GSAStat' from a github remote, the SHA1 (7f9ae193) has not changed since last install.
+#> Skipping install of 'statgsa' from a github remote, the SHA1 (dfafb62d) has not changed since last install.
 #>   Use `force = TRUE` to force installation
-library(GSAStat)
+library(statgsa)
 #> Warning: substituindo importação prévia 'DescTools::Recode' por 'car::Recode'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'DescTools::RMSE' por 'caret::RMSE'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'DescTools::MAE' por 'caret::MAE'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'car::recode' por 'dplyr::recode'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'magrittr::set_names' por
-#> 'rlang::set_names' quando carregando 'GSAStat'
+#> 'rlang::set_names' quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'pROC::cov' por 'stats::cov' quando
-#> carregando 'GSAStat'
+#> carregando 'statgsa'
 #> Warning: substituindo importação prévia 'dplyr::lag' por 'stats::lag' quando
-#> carregando 'GSAStat'
+#> carregando 'statgsa'
 #> Warning: substituindo importação prévia 'dplyr::filter' por 'stats::filter'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'pROC::smooth' por 'stats::smooth'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'janitor::chisq.test' por
-#> 'stats::chisq.test' quando carregando 'GSAStat'
+#> 'stats::chisq.test' quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'lmerTest::step' por 'stats::step'
-#> quando carregando 'GSAStat'
+#> quando carregando 'statgsa'
 #> Warning: substituindo importação prévia 'pROC::var' por 'stats::var' quando
-#> carregando 'GSAStat'
+#> carregando 'statgsa'
 #> Warning: substituindo importação prévia 'janitor::fisher.test' por
-#> 'stats::fisher.test' quando carregando 'GSAStat'
+#> 'stats::fisher.test' quando carregando 'statgsa'
 ```
 
 Contagem geral
