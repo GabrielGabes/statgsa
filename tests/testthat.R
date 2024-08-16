@@ -9,4 +9,20 @@
 library(testthat)
 library(GSAStat)
 
+# Dependencias Obrigatorias
+library(stats)
+library(rlang)
+library(dplyr)
+library(janitor)
+library(effsize)
+library(caret)
+library(DescTools)
+library(car)
+library(pROC)
+library(MuMIn)
+
+# Outras dependencias
+library(magrittr)
+library(tidyr)
+
 test_check("GSAStat")

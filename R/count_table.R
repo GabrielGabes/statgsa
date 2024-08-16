@@ -1,40 +1,47 @@
-# Tabela contagem simples
-freq_table = function(df, variavel){
-  df %>% tabyl(.data[[variavel]], show_na = FALSE) %>%
-    adorn_pct_formatting(2) %>% as.data.frame()
-}
+#' count_table
+#'
+#' Creates a contingency table with counts, percentages, and hypothesis testing.
+#'
+#' This function generates a contingency table that includes counts, row and column totals, and percentages.
+#' Additionally, it applies appropriate hypothesis tests (Fisher's exact test or Chi-squared test) to evaluate
+#' the association between two categorical variables. The table is formatted for clarity, making it ideal for
+#' presentation in reports or publications.
+#'
+#' @param df A data frame containing the data.
+#' @param var_y A string representing the name of the dependent (response) categorical variable.
+#' @param var_x A string representing the name of the independent (explanatory) categorical variable.
+#' @param sentido_percent A string indicating the direction in which percentages should be calculated.
+#'        Options are 'col' for column percentages or 'row' for row percentages. Default is 'col'.
+#' @param apenas_fisher A logical value indicating whether to use only Fisher's exact test when the contingency table
+#'        has 2x2 dimensions. If `TRUE`, Fisher's test will always be used for 2x2 tables. Default is `FALSE`.
+#'
+#' @return A data frame containing the formatted contingency table with counts, percentages, and the results of the hypothesis test.
+#'
+#' @export
+#' @import stats
+#' @import dplyr
+#' @import magrittr
+#' @import janitor
+#'
+#' @examples
+#' # Example of using the count_table function
+#' data <- data.frame(treatment = c("A", "B", "A", "C", "B", "A"),
+#'                    outcome = c("Yes", "No", "Yes", "Yes", "No", "No"))
+#' count_table(data, "outcome", "treatment")
+#' # Returns a contingency table with counts, percentages, and a p-value from the appropriate test
 
-
-# Função que verifica se é melhor aplicavel o teste de fisher para testar a hipotese entre duas variaveis categoricas
-is_fisher_applicable = function(df, var1, var2){
-  length1 = length(levels(as.factor(df[[var1]])))
-  length2 = length(levels(as.factor(df[[var2]])))
-  if (length1 >= 3 || length2 >= 3){
-    return(FALSE)
-  }
-  else {
-    # Criar tabela de contignecia
-    tabela = table(df[[var1]], df[[var2]])
-    # Calcular as expectativas de frequência
-    total_geral = sum(tabela)
-    expectativas = outer(rowSums(tabela), colSums(tabela), FUN = "*") / total_geral
-    # Verificar se alguma célula tem expectativa de frequência < 5
-    return(any(expectativas < 5))
-  }
-}
-
-# Tabela de contignecia
 count_table = function(df, var_y, var_x, sentido_percent='col', apenas_fisher=F){
   #sentido_porcent => #col, row
   tabela = df %>%
-    tabyl(.data[[var_x]], .data[[var_y]], show_na = FALSE) %>%
+    janitor::tabyl(!!sym(var_x), !!sym(var_y), show_na = FALSE) %>%
     adorn_totals(c("row", "col")) %>%
     adorn_percentages(sentido_percent) %>%
-    adorn_pct_formatting(2) %>% adorn_ns
+    adorn_pct_formatting(2) %>%
+    adorn_ns
 
   #tabela = as.data.frame(tabela) %>%
   #mutate(across(where(is.character), ~ str_replace_all(.x, "(\\d+\\.\\d+)\\% *\\(? *(\\d+)\\)?", "\\2 (\\1%)")))
-  tabela = rename(tabela, "Variable" = var_x)
+  tabela <- rename(tabela, "Variable" = all_of(var_x))
   tabela = rbind(NA, tabela)
   tabela[["Variable"]] = as.character(tabela[["Variable"]])
   tabela[["Variable"]][1] = var_x
@@ -45,13 +52,13 @@ count_table = function(df, var_y, var_x, sentido_percent='col', apenas_fisher=F)
   tabela[["Test_Used"]] = NA
   if(is_fisher_applicable(df, var_y, var_x) == F){
     if (nrow(tabela) <= 3 && apenas_fisher == T){
-      tabela[["P-value"]][1] = retorne_p(fisher.test(df[[var_x]],df[[var_y]])$p.value)
+      tabela[["P-value"]][1] = pval_string(stats::fisher.test(df[[var_x]],df[[var_y]])$p.value)
       tabela[["Test_Used"]][1] = "Fisher Exact"}
     else {
-      tabela[["P-value"]][1] = retorne_p(chisq.test(df[[var_x]],df[[var_y]])$p.value)
+      tabela[["P-value"]][1] = pval_string(stats::chisq.test(df[[var_x]],df[[var_y]])$p.value)
       tabela[["Test_Used"]][1] = "Chi-squared"}}
   else{
-    tabela[["P-value"]][1] = retorne_p(fisher.test(df[[var_x]],df[[var_y]])$p.value)
+    tabela[["P-value"]][1] = pval_string(stats::fisher.test(df[[var_x]],df[[var_y]])$p.value)
     tabela[["Test_Used"]][1] = "Fisher Exact"}
 
   # Reordenando as colunas, colocando coluna total para primeira posicao
@@ -70,5 +77,3 @@ count_table = function(df, var_y, var_x, sentido_percent='col', apenas_fisher=F)
 
   return(tabela %>% as.data.frame())
 }
-
-count_table(dff, "desfecho", "tratamentos")
