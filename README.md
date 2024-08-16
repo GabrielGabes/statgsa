@@ -16,6 +16,19 @@ You can install the development version of GSAStat from
 ``` r
 # install.packages("pak")
 pak::pak("GabrielGabes/GSAStat")
+#> ℹ Loading metadata database✔ Loading metadata database ... done
+#>  
+#> → Will update 1 package.
+#> → Will download 1 package with unknown size.
+#> + GSAStat 0.0.0.9000 → 0.0.0.9000 [bld][cmp][dl] (GitHub: 7f9ae19)
+#> ℹ Getting 1 pkg with unknown size
+#> ✔ Got GSAStat 0.0.0.9000 (source) (52.04 kB)
+#> ℹ Packaging GSAStat 0.0.0.9000
+#> ✔ Packaged GSAStat 0.0.0.9000 (1.1s)
+#> ℹ Building GSAStat 0.0.0.9000
+#> ✔ Built GSAStat 0.0.0.9000 (7.4s)
+#> ✔ Installed GSAStat 0.0.0.9000 (github::GabrielGabes/GSAStat@7f9ae19) (102ms)
+#> ✔ 1 pkg + 113 deps: kept 94, upd 1, dld 1 (NA B) [16.8s]
 ```
 
 ## Example
@@ -51,11 +64,238 @@ You can also embed plots, for example:
 In that case, don’t forget to commit and push the resulting figure
 files, so they display on GitHub and CRAN.
 
+# EU
+
 ``` r
-pacman::p_load(
-dplyr, # manipulação de dados
-magrittr, # operador pipe line %>%
-janitor, # tabela de contigencia => tabyl, adorn_pct_formatting, adorn_totals, adorn_percentages, adorn_ns
-effsize # tamanho do efeito d'cohen
-)
+library(MASS)
+birthwt = MASS::birthwt
+head(birthwt)
+#>    low age lwt race smoke ptl ht ui ftv  bwt
+#> 85   0  19 182    2     0   0  0  1   0 2523
+#> 86   0  33 155    3     0   0  0  0   3 2551
+#> 87   0  20 105    1     1   0  0  0   1 2557
+#> 88   0  21 108    1     1   0  0  1   2 2594
+#> 89   0  18 107    1     1   0  0  1   0 2600
+#> 91   0  21 124    3     0   0  0  0   0 2622
+```
+
+``` r
+# install.packages("remotes")
+remotes::install_github("GabrielGabes/GSAStat")
+#> Using GitHub PAT from the git credential store.
+#> Skipping install of 'GSAStat' from a github remote, the SHA1 (7f9ae193) has not changed since last install.
+#>   Use `force = TRUE` to force installation
+library(GSAStat)
+#> Warning: substituindo importação prévia 'DescTools::Recode' por 'car::Recode'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'DescTools::RMSE' por 'caret::RMSE'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'DescTools::MAE' por 'caret::MAE'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'car::recode' por 'dplyr::recode'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'magrittr::set_names' por
+#> 'rlang::set_names' quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'pROC::cov' por 'stats::cov' quando
+#> carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'dplyr::lag' por 'stats::lag' quando
+#> carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'dplyr::filter' por 'stats::filter'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'pROC::smooth' por 'stats::smooth'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'janitor::chisq.test' por
+#> 'stats::chisq.test' quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'lmerTest::step' por 'stats::step'
+#> quando carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'pROC::var' por 'stats::var' quando
+#> carregando 'GSAStat'
+#> Warning: substituindo importação prévia 'janitor::fisher.test' por
+#> 'stats::fisher.test' quando carregando 'GSAStat'
+```
+
+Contagem geral
+
+``` r
+freq_table(birthwt, 'low')
+#>   low   n percent
+#> 1   0 130  68.78%
+#> 2   1  59  31.22%
+```
+
+Raça da Mãe vs Habito de Fumar:
+
+``` r
+count_table(birthwt, 'race', 'smoke')
+#>   Variable     Overall          1          2          3 P-value   Test_Used
+#> 1    smoke        <NA>       <NA>       <NA>       <NA> < 0.001 Chi-squared
+#> 2        0 60.85 (115) 45.83 (44) 61.54 (16) 82.09 (55)    <NA>        <NA>
+#> 3        1  39.15 (74) 54.17 (52) 38.46 (10) 17.91 (12)    <NA>        <NA>
+```
+
+Raça da Mãe vs Idade da mãe
+
+``` r
+summary_num_nonparametric_groups(birthwt, 'age', 'race')
+#>   Variable      Overall              1                 2            3 P-value
+#> 1      age 23 [19 - 26] 23.5 [20 - 29] 20.5 [17.25 - 24] 22 [19 - 25]    0.02
+#>        Test_Used
+#> 1 Kruskal-Wallis
+summary_num_parametric_groups(birthwt, 'age', 'race')
+#>   Variable     Overall            1            2            3 P-value Test_Used
+#> 1      age 23.24 (5.3) 24.29 (5.65) 21.54 (5.11) 22.39 (4.54)    0.01     Anova
+```
+
+Qual abordagem de analise é a adequada? teste t tem como pressuposto a
+normalidade
+
+``` r
+group_normality_test(birthwt, 'age', 'race')
+#>   race     p_value
+#> 1    1 0.002429356
+#> 2    2 0.012248531
+#> 3    3 0.278115618
+```
+
+o terceiro grupo não contem distribuição normal, portanto uma abordagem
+não parametrica é a mais adequada (median \[IQR\] - Teste de hipotese:
+Mann Whitney) Porém não precisa se preocupar em prestar atenção nisso,
+basta rodar o código abaixo
+
+``` r
+summary_num_groups(birthwt, 'age', 'race')
+#>   Variable      Overall              1                 2            3 P-value
+#> 1      age 23 [19 - 26] 23.5 [20 - 29] 20.5 [17.25 - 24] 22 [19 - 25]    0.02
+#>        Test_Used
+#> 1 Kruskal-Wallis
+```
+
+Analise Univariada
+
+``` r
+adaptive_cross_table(birthwt, 'low')
+#>    Variable Overall 100% (n=189)   0 68.78% (n=130)      1 31.22% (n=59)
+#> 1       age         23 [19 - 26]       23 [19 - 28]       22 [19.5 - 25]
+#> 2       lwt      121 [110 - 140]  123.5 [113 - 147]      120 [104 - 130]
+#> 3      race            1 [1 - 3]          1 [1 - 3]            2 [1 - 3]
+#> 4     smoke                 <NA>               <NA>                 <NA>
+#> 5         0          60.85 (115)         66.15 (86)           49.15 (29)
+#> 6         1           39.15 (74)         33.85 (44)           50.85 (30)
+#> 7       ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
+#> 8        ht                 <NA>               <NA>                 <NA>
+#> 9         0          93.65 (177)        96.15 (125)           88.14 (52)
+#> 10        1            6.35 (12)          3.85  (5)            11.86 (7)
+#> 11       ui                 <NA>               <NA>                 <NA>
+#> 12        0          85.19 (161)        89.23 (116)           76.27 (45)
+#> 13        1           14.81 (28)         10.77 (14)           23.73 (14)
+#> 14      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
+#> 15      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
+#>    P-value    Test_Used
+#> 1     0.24 Mann-Whitney
+#> 2     0.01 Mann-Whitney
+#> 3    0.051 Mann-Whitney
+#> 4     0.03  Chi-squared
+#> 5     <NA>         <NA>
+#> 6     <NA>         <NA>
+#> 7  < 0.001 Mann-Whitney
+#> 8    0.051 Fisher Exact
+#> 9     <NA>         <NA>
+#> 10    <NA>         <NA>
+#> 11    0.03  Chi-squared
+#> 12    <NA>         <NA>
+#> 13    <NA>         <NA>
+#> 14    0.23 Mann-Whitney
+#> 15 < 0.001 Mann-Whitney
+```
+
+Mudando o sentido da porcentagem
+
+``` r
+adaptive_cross_table(birthwt, 'low', 'row')
+#>    Variable Overall 100% (n=189)   0 68.78% (n=130)      1 31.22% (n=59)
+#> 1       age         23 [19 - 26]       23 [19 - 28]       22 [19.5 - 25]
+#> 2       lwt      121 [110 - 140]  123.5 [113 - 147]      120 [104 - 130]
+#> 3      race            1 [1 - 3]          1 [1 - 3]            2 [1 - 3]
+#> 4     smoke                 <NA>               <NA>                 <NA>
+#> 5         0         100.00 (115)         74.78 (86)           25.22 (29)
+#> 6         1          100.00 (74)         59.46 (44)           40.54 (30)
+#> 7       ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
+#> 8        ht                 <NA>               <NA>                 <NA>
+#> 9         0         100.00 (177)        70.62 (125)           29.38 (52)
+#> 10        1          100.00 (12)         41.67  (5)            58.33 (7)
+#> 11       ui                 <NA>               <NA>                 <NA>
+#> 12        0         100.00 (161)        72.05 (116)           27.95 (45)
+#> 13        1          100.00 (28)         50.00 (14)           50.00 (14)
+#> 14      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
+#> 15      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
+#>    P-value    Test_Used
+#> 1     0.24 Mann-Whitney
+#> 2     0.01 Mann-Whitney
+#> 3    0.051 Mann-Whitney
+#> 4     0.03  Chi-squared
+#> 5     <NA>         <NA>
+#> 6     <NA>         <NA>
+#> 7  < 0.001 Mann-Whitney
+#> 8    0.051 Fisher Exact
+#> 9     <NA>         <NA>
+#> 10    <NA>         <NA>
+#> 11    0.03  Chi-squared
+#> 12    <NA>         <NA>
+#> 13    <NA>         <NA>
+#> 14    0.23 Mann-Whitney
+#> 15 < 0.001 Mann-Whitney
+```
+
+``` r
+for (coluna in names(birthwt)){
+  qtd_levels = birthwt[[coluna]] %>% as.factor() %>% levels() %>% length()
+  
+  if (qtd_levels <= 3){
+    birthwt[[coluna]] = birthwt[[coluna]] %>% as.factor()
+  }
+}
+```
+
+``` r
+logit_model <- glm(low ~ age + lwt + race + smoke + ht + ui, data = birthwt, family = binomial)
+# summary(logit_model)
+binary_model_eval(logit_model) %>% round(2)
+#> Setting levels: control = 0, case = 1
+#> Setting direction: controls < cases
+#>             Accuracy       Pos Pred Value          Sensitivity 
+#>                 0.75                 0.66                 0.39 
+#>          Specificity          F1_Score.F1                  AUC 
+#>                 0.91                 0.49                 0.73 
+#>   Pseudo_R2.McFadden Pseudo_R2.Nagelkerke                  AIC 
+#>                 0.13                 0.21               219.95 
+#>                  BIC                  VIF               Status 
+#>               245.88                 0.00                 1.00
+univariate_model_analysis(logit_model)
+#> Waiting for profiling to be done...
+#>          OR 2.5 % 97.5 % Pr(>|z|)
+#> age    0.98  0.91   1.05     0.60
+#> lwt    0.98  0.97   1.00     0.01
+#> race2  3.60  1.29  10.32     0.01
+#> race3  2.46  1.07   5.91     0.03
+#> smoke1 2.79  1.31   6.19    0.009
+#> ht1    6.41  1.72  27.01    0.007
+#> ui1    2.45  1.01   5.94     0.04
+```
+
+``` r
+model1 <- lm(bwt ~ lwt, data = birthwt)
+# summary(model1)
+lm_model_eval(model1) %>% round(2)
+#>       MAE       MSE      RMSE      MAPE       AIC       BIC        R2    R2_adj 
+#>    571.54 510693.21    714.63     23.49   3026.48   3036.21      0.03      0.03 
+#>       VIF    Status 
+#>      0.00      1.00
+
+model2 <- lm(bwt ~ lwt + age + race + smoke + ht + ui, data = birthwt)
+# summary(model2)
+lm_model_eval(model2) %>% round(2)
+#>       MAE       MSE      RMSE      MAPE       AIC       BIC        R2    R2_adj 
+#>    513.59 401230.61    633.43     20.52   2992.89   3022.07      0.24      0.21 
+#>       VIF    Status 
+#>      0.00      1.00
 ```

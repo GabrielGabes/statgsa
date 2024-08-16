@@ -24,7 +24,8 @@ The goal of GSAStat is to ...
 
 You can install the development version of GSAStat from [GitHub](https://github.com/) with:
 
-``` r
+
+```{r}
 # install.packages("pak")
 pak::pak("GabrielGabes/GSAStat")
 ```
@@ -54,13 +55,94 @@ plot(pressure)
 
 In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
 
+# EU
 
-```{r Bibliotecas usadas}
-pacman::p_load(
-dplyr, # manipulação de dados
-magrittr, # operador pipe line %>%
-janitor, # tabela de contigencia => tabyl, adorn_pct_formatting, adorn_totals, adorn_percentages, adorn_ns
-effsize # tamanho do efeito d'cohen
-)
+```{r base de dados}
+library(MASS)
+birthwt = MASS::birthwt
+head(birthwt)
+```
+
+```{r}
+# install.packages("remotes")
+remotes::install_github("GabrielGabes/GSAStat")
+library(GSAStat)
+```
+
+Contagem geral
+
+```{r}
+freq_table(birthwt, 'low')
+```
+
+Raça da Mãe vs Habito de Fumar:
+
+```{r}
+count_table(birthwt, 'race', 'smoke')
+```
+
+Raça da Mãe vs Idade da mãe
+
+```{r}
+summary_num_nonparametric_groups(birthwt, 'age', 'race')
+summary_num_parametric_groups(birthwt, 'age', 'race')
+```
+
+Qual abordagem de analise é a adequada?
+teste t tem como pressuposto a normalidade
+
+```{r}
+group_normality_test(birthwt, 'age', 'race')
+```
+o terceiro grupo não contem distribuição normal, portanto uma abordagem não parametrica é a mais adequada (median [IQR] - Teste de hipotese: Mann Whitney)
+Porém não precisa se preocupar em prestar atenção nisso, basta rodar o código abaixo
+
+```{r}
+summary_num_groups(birthwt, 'age', 'race')
+```
+
+Analise Univariada
+
+```{r}
+adaptive_cross_table(birthwt, 'low')
+```
+
+
+Mudando o sentido da porcentagem
+
+```{r}
+adaptive_cross_table(birthwt, 'low', 'row')
+```
+
+```{r}
+for (coluna in names(birthwt)){
+  qtd_levels = birthwt[[coluna]] %>% as.factor() %>% levels() %>% length()
+  
+  if (qtd_levels <= 3){
+    birthwt[[coluna]] = birthwt[[coluna]] %>% as.factor()
+  }
+}
+```
+
+
+```{r}
+logit_model <- glm(low ~ age + lwt + race + smoke + ht + ui, data = birthwt, family = binomial)
+# summary(logit_model)
+binary_model_eval(logit_model) %>% round(2)
+univariate_model_analysis(logit_model)
+
+```
+
+```{r}
+model1 <- lm(bwt ~ lwt, data = birthwt)
+# summary(model1)
+lm_model_eval(model1) %>% round(2)
+
+model2 <- lm(bwt ~ lwt + age + race + smoke + ht + ui, data = birthwt)
+# summary(model2)
+lm_model_eval(model2) %>% round(2)
+```
+
+```{r}
 ```
 
