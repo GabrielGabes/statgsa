@@ -43,9 +43,10 @@ adaptive_cross_table = function(df, analyzed_column, sentido_percent='col', apen
 
   for (coluna in lista_coluna){
     classe = class(df[[coluna]])[1]
+    qtd_levels = df[[coluna]] %>% as.factor() %>% levels() %>% length()
 
     tryCatch({
-      if (classe == "numeric"){
+      if (classe == "numeric" | classe == 'integer' & qtd_levels > 2){
         local_erro = 'normality test'
         if (group_normality_test(df, coluna, analyzed_column, type_response = 1) == TRUE){
           local_erro = 'parametric test'
@@ -56,13 +57,13 @@ adaptive_cross_table = function(df, analyzed_column, sentido_percent='col', apen
           tabelinha = summary_num_nonparametric_groups(df, coluna, analyzed_column)
         }
       }
-      else if (classe == 'character' | classe == 'factor'){
+      else if (classe == 'character' | classe == 'factor' | classe == 'logical' | qtd_levels == 2){
         local_erro = 'contingency test'
         tabelinha = count_table(df, analyzed_column, coluna, sentido_percent)
       }
       tabelona = rbind(tabelona, tabelinha)
     }, error = function(e) {
-      print(paste('problems with:', coluna, '\ntype error:', local_erro))
+      print(paste('problems with:', coluna))#, '\ntype error:', local_erro))
     })
   }
 
