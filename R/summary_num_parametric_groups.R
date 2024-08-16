@@ -67,8 +67,19 @@ summary_num_parametric_groups <- function(df, col_num, col_cat, teste_extra = "F
   tabela[["Test_Used"]] = NA
 
   if ( length(levels(as.factor(df[[col_cat]]))) <= 2 ){
-    pvalor = pval_string(t.test(df[[col_num]]~df[[col_cat]])$p.value)
-    tabela[["Test_Used"]][1] = "T Test"
+    formula = formula(paste0(col_num, '~', col_cat))
+
+    # Verificando homogenidade
+    teste_homogeneidade = bartlett.test(formula, df)
+    # h0 = as varianças são homogeneas
+
+    if (teste_homogeneidade$p.value > 0.05){
+      tabela[["Test_Used"]][1] = "Student's t-test"
+      pvalor = pval_string(t.test(df[[col_num]]~df[[col_cat]], var.equal=T)$p.value)
+    } else {
+      tabela[["Test_Used"]][1] = "Welch's t-test"
+      pvalor = pval_string(t.test(df[[col_num]]~df[[col_cat]], var.equal=F)$p.value)
+    }
 
     if (teste_extra == "T"){
       niveis = df[[col_cat]] %>% as.factor() %>% levels()
