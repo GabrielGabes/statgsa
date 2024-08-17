@@ -46,16 +46,17 @@ One of the standout features of statgsa is its ability to generate **adaptive cr
 You can install the development version of statgsa from [GitHub](https://github.com/GabrielGabes/statgsa) with:
 
 ```{r carregar o pacote}
-# install.packages("pak")
+if(!require(pak)) install.packages("pak")
+# library(pak)
 pak::pak("GabrielGabes/statgsa")
 ```
 
 or
 
-```{r outra forma de carregar o pacote}
-# install.packages("remotes")
-# remotes::install_github("GabrielGabes/statgsa")
-# library(statgsa)
+```{r outra forma de carregar o pacote, eval = FALSE}
+if(!require(remotes)) install.packages("remotes")
+# library(remotes)
+remotes::install_github("GabrielGabes/statgsa")
 ```
 
 ## Loading Package
@@ -69,7 +70,6 @@ suppressWarnings(library(statgsa))
 ```{r, eval = FALSE}
 library(statgsa)
 ```
-
 
 Also load dependent packages
 

@@ -1,10 +1,10 @@
 Package: statgsa
-Title: Statistical Analysis Tools for Generalized Linear Models
-Version: 0.0.0.9000
+Title: Statistical Analysis Tools for epidemiological and biomedical research
+Version: 0.1.0
 Authors@R: 
     person("Gabriel", "Silva dos Anjos", , "gabriel_s_anjos@yahoo.com", role = c("aut", "cre"),
            comment = c(ORCID = "0009-0006-0182-904X"))
-Description: What the package does (one paragraph).
+Description: Description: Provides a collection of tools for conducting statistical analyses. The package includes functions ranging from output formation to model evaluation, hypothesis testing, cross-tabulation and more, aiming to streamline the statistical analysis process in epidemiological and biomedical research.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

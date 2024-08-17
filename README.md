@@ -57,20 +57,27 @@ You can install the development version of statgsa from
 [GitHub](https://github.com/GabrielGabes/statgsa) with:
 
 ``` r
-# install.packages("pak")
+if(!require(pak)) install.packages("pak")
+#> Carregando pacotes exigidos: pak
+```
+
+``` r
+# library(pak)
 pak::pak("GabrielGabes/statgsa")
-#> ℹ Loading metadata database✔ Loading metadata database ... done
+#> 
+#> ✔ Updated metadata database: 4.91 MB in 4 files.
+#> ℹ Updating metadata database✔ Updating metadata database ... done
 #>  
 #> ℹ No downloads are needed
-#> ✔ 1 pkg + 113 deps: kept 95 [6.7s]
+#> ✔ 1 pkg + 118 deps: kept 102 [14.9s]
 ```
 
 or
 
 ``` r
-# install.packages("remotes")
-# remotes::install_github("GabrielGabes/statgsa")
-# library(statgsa)
+if(!require(remotes)) install.packages("remotes")
+# library(remotes)
+remotes::install_github("GabrielGabes/statgsa")
 ```
 
 ## Loading Package
@@ -85,6 +92,9 @@ Also load dependent packages
 # Package loading facilitator
 if(!require(pacman)) install.packages("pacman")
 #> Carregando pacotes exigidos: pacman
+```
+
+``` r
 library(pacman)
 
 # dependents Packages
@@ -128,6 +138,9 @@ library(MASS)
 #> O seguinte objeto é mascarado por 'package:dplyr':
 #> 
 #>     select
+```
+
+``` r
 birthwt = MASS::birthwt
 head(birthwt)
 #>    low age lwt race smoke ptl ht ui ftv  bwt
@@ -186,6 +199,9 @@ summary_num_nonparametric_groups(birthwt, 'age', 'race')
 #> 1      age 23 [19 - 26] 23.5 [20 - 29] 20.5 [17.25 - 24] 22 [19 - 25]    0.02
 #>        Test_Used
 #> 1 Kruskal-Wallis
+```
+
+``` r
 summary_num_parametric_groups(birthwt, 'age', 'race')
 #>   Variable     Overall            1            2            3 P-value Test_Used
 #> 1      age 23.24 (5.3) 24.29 (5.65) 21.54 (5.11) 22.39 (4.54)    0.01     Anova
@@ -323,6 +339,9 @@ binary_model_eval(logit_model) %>% round(2)
 #>                 0.13                 0.21               219.95 
 #>                  BIC                  VIF               Status 
 #>               245.88                 0.00                 1.00
+```
+
+``` r
 univariate_model_analysis(logit_model)
 #> Waiting for profiling to be done...
 #>          OR 2.5 % 97.5 % Pr(>|z|)
@@ -345,6 +364,9 @@ lm_model_eval(model1) %>% round(2)
 #>    571.54 510693.21    714.63     23.49   3026.48   3036.21      0.03      0.03 
 #>       VIF    Status 
 #>      0.00      1.00
+```
+
+``` r
 
 model2 <- lm(bwt ~ lwt + age + race + smoke + ht + ui, data = birthwt)
 # summary(model2)
