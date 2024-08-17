@@ -18,44 +18,96 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of statgsa is to ...
+# statgsa: Automating Epidemiological Data Analysis
+
+*"Anything that can be automated, should be automated."*  
+— Inspired by the philosophy of Hadley Wickham's book "R Packages"
+
+Building on this principle, I have developed an entire pipeline for epidemiological data analysis, drawing from years of experience in data science, specifically in biostatistics. The **statgsa** package is designed to streamline and enhance the efficiency of statistical analysis in research, ensuring that critical tasks are automated, consistent, and error-free.
+
+## Why statgsa?
+
+This package offers a comprehensive suite of functions, each meticulously crafted to address a wide array of tasks in statistical analysis. Below are some of the key features:
+
+- **Output Formatting**: Functions designed to ensure that the results of statistical analyses are presented clearly and professionally. This is crucial for organizing research findings in a way that meets the rigorous standards required by scientific journals.
+- **Cross Tables with Hypothesis Testing**: Automatically analyzes the data and selects the most appropriate statistical tests, generating detailed cross-tabulations.
+- **Numerical Summaries by Group with Hypothesis Testing**: Similar to the cross tables, this feature automatically determines and applies the correct hypothesis tests, providing insightful group summaries.
+- **Comprehensive Crosstables**: Generate complete and detailed crosstables that are ready for reporting.
+- **Evaluation Metrics for Supervised ML Models**: Includes measures for evaluating the performance of machine learning models in a statistical context.
+- **Complex Statistical Analyses**: Streamline and automate intricate statistical procedures, allowing you to focus on interpreting the results.
+
+### The Power of Adaptive Cross Tables
+
+One of the standout features of statgsa is its ability to generate **adaptive cross tables**. These tables automatically adjust based on the types of variables involved, applying the correct hypothesis tests and criteria. This flexibility significantly accelerates the process of generating accurate and publication-ready tables for reports.
+
 
 ## Installation
 
-You can install the development version of statgsa from [GitHub](https://github.com/) with:
+You can install the development version of statgsa from [GitHub](https://github.com/GabrielGabes/statgsa) with:
 
-
-```{r}
+```{r carregar o pacote}
 # install.packages("pak")
 pak::pak("GabrielGabes/statgsa")
 ```
 
+or
+
+```{r outra forma de carregar o pacote}
+# install.packages("remotes")
+# remotes::install_github("GabrielGabes/statgsa")
+# library(statgsa)
+```
+
+## Loading Package
+
+```{r, include = FALSE}
+# Suprimir todos os warnings no script
+options(warn = -1)
+suppressWarnings(library(statgsa))
+```
+
+```{r, eval = FALSE}
+library(statgsa)
+```
+
+
+Also load dependent packages
+
+```{r pacotes dependentes}
+# Package loading facilitator
+if(!require(pacman)) install.packages("pacman")
+library(pacman)
+
+# dependents Packages
+pacman::p_load(
+stats,
+rlang,
+dplyr,
+janitor,
+effsize,
+caret,
+DescTools,
+car,
+pROC,
+MuMIn,
+magrittr,
+tidyr
+)
+```
+
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example that demonstrates how to solve a common problem in the analysis of epidemiological study data:
 
-```{r example}
-# library(statgsa)
-## basic example code
-```
+The dataset from the `MASS` package contains data on 189 births at the Baystate Medical Centre, Springfield, Massachusetts during 1986 (Venables & Ripley, 2002).
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+You can find the data dictionary here:  
+[Data Dictionary for birthwt](https://www.rdocumentation.org/packages/MASS/versions/7.3-61/topics/birthwt)
 
-```{r cars}
-summary(cars)
-```
+### Data Preparation
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+Let's load the dataset and inspect the first few rows:
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
-
-# EU
 
 ```{r base de dados}
 library(MASS)
@@ -63,58 +115,9 @@ birthwt = MASS::birthwt
 head(birthwt)
 ```
 
-```{r}
-# install.packages("remotes")
-remotes::install_github("GabrielGabes/statgsa")
-library(statgsa)
-```
+Next, we'll adjust the variable types:
 
-Contagem geral
-
-```{r}
-freq_table(birthwt, 'low')
-```
-
-Raça da Mãe vs Habito de Fumar:
-
-```{r}
-count_table(birthwt, 'race', 'smoke')
-```
-
-Raça da Mãe vs Idade da mãe
-
-```{r}
-summary_num_nonparametric_groups(birthwt, 'age', 'race')
-summary_num_parametric_groups(birthwt, 'age', 'race')
-```
-
-Qual abordagem de analise é a adequada?
-teste t tem como pressuposto a normalidade
-
-```{r}
-group_normality_test(birthwt, 'age', 'race')
-```
-o terceiro grupo não contem distribuição normal, portanto uma abordagem não parametrica é a mais adequada (median [IQR] - Teste de hipotese: Mann Whitney)
-Porém não precisa se preocupar em prestar atenção nisso, basta rodar o código abaixo
-
-```{r}
-summary_num_groups(birthwt, 'age', 'race')
-```
-
-Analise Univariada
-
-```{r}
-adaptive_cross_table(birthwt, 'low')
-```
-
-
-Mudando o sentido da porcentagem
-
-```{r}
-adaptive_cross_table(birthwt, 'low', 'row')
-```
-
-```{r}
+```{r Ajeitando o tipo das variaveis}
 for (coluna in names(birthwt)){
   qtd_levels = birthwt[[coluna]] %>% as.factor() %>% levels() %>% length()
   
@@ -124,16 +127,69 @@ for (coluna in names(birthwt)){
 }
 ```
 
+## Analysis
 
-```{r}
+The main variable of interest is low birth weight, a binary response variable (D. W. Hosmer & Lemeshow, 1989).
+
+### General Count
+
+
+```{r contagem simples}
+freq_table(birthwt, 'low')
+```
+
+### Mother's Race vs. Smoking Habit
+
+```{r tabela cruzada}
+count_table(birthwt, 'race', 'smoke')
+```
+
+### Mother's Race vs. Mother's Age
+We can summarize the age by race using both non-parametric and parametric approaches:
+
+```{r resumo numerico por grupo}
+summary_num_nonparametric_groups(birthwt, 'age', 'race')
+summary_num_parametric_groups(birthwt, 'age', 'race')
+```
+
+### Determining the Appropriate Analytical Approach
+Since the t-test assumes normality, we first check the normality of the data:
+
+```{r normalidade por grupo}
+group_normality_test(birthwt, 'age', 'race')
+```
+
+The third group does not follow a normal distribution, so a non-parametric approach (median [IQR] - Hypothesis Test: Mann-Whitney) is more appropriate. However, you don't need to worry about deciding this manually—just run the code below:
+
+```{r resumo numerico por grupo adaptativo}
+summary_num_groups(birthwt, 'age', 'race')
+```
+
+### Cross Tables - Univariate Analysis
+
+```{r crosstable}
+adaptive_cross_table(birthwt, 'low')
+```
+
+### Cross Tables - Changing the Percentage Orientation
+
+```{r crosstable row}
+adaptive_cross_table(birthwt, 'low', 'row')
+```
+
+### Evaluation Metrics for Supervised ML Models
+Here’s how to evaluate a logistic regression model:
+
+```{r modelo logistico}
 logit_model <- glm(low ~ age + lwt + race + smoke + ht + ui, data = birthwt, family = binomial)
 # summary(logit_model)
 binary_model_eval(logit_model) %>% round(2)
 univariate_model_analysis(logit_model)
-
 ```
 
-```{r}
+And here’s how to evaluate linear regression models:
+
+```{r modelo linear}
 model1 <- lm(bwt ~ lwt, data = birthwt)
 # summary(model1)
 lm_model_eval(model1) %>% round(2)
@@ -142,7 +198,3 @@ model2 <- lm(bwt ~ lwt + age + race + smoke + ht + ui, data = birthwt)
 # summary(model2)
 lm_model_eval(model2) %>% round(2)
 ```
-
-```{r}
-```
-

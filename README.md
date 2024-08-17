@@ -6,68 +6,128 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of statgsa is to …
+# statgsa: Automating Epidemiological Data Analysis
+
+*“Anything that can be automated, should be automated.”*  
+— Inspired by the philosophy of Hadley Wickham’s book “R Packages”
+
+Building on this principle, I have developed an entire pipeline for
+epidemiological data analysis, drawing from years of experience in data
+science, specifically in biostatistics. The **statgsa** package is
+designed to streamline and enhance the efficiency of statistical
+analysis in research, ensuring that critical tasks are automated,
+consistent, and error-free.
+
+## Why statgsa?
+
+This package offers a comprehensive suite of functions, each
+meticulously crafted to address a wide array of tasks in statistical
+analysis. Below are some of the key features:
+
+- **Output Formatting**: Functions designed to ensure that the results
+  of statistical analyses are presented clearly and professionally. This
+  is crucial for organizing research findings in a way that meets the
+  rigorous standards required by scientific journals.
+- **Cross Tables with Hypothesis Testing**: Automatically analyzes the
+  data and selects the most appropriate statistical tests, generating
+  detailed cross-tabulations.
+- **Numerical Summaries by Group with Hypothesis Testing**: Similar to
+  the cross tables, this feature automatically determines and applies
+  the correct hypothesis tests, providing insightful group summaries.
+- **Comprehensive Crosstables**: Generate complete and detailed
+  crosstables that are ready for reporting.
+- **Evaluation Metrics for Supervised ML Models**: Includes measures for
+  evaluating the performance of machine learning models in a statistical
+  context.
+- **Complex Statistical Analyses**: Streamline and automate intricate
+  statistical procedures, allowing you to focus on interpreting the
+  results.
+
+### The Power of Adaptive Cross Tables
+
+One of the standout features of statgsa is its ability to generate
+**adaptive cross tables**. These tables automatically adjust based on
+the types of variables involved, applying the correct hypothesis tests
+and criteria. This flexibility significantly accelerates the process of
+generating accurate and publication-ready tables for reports.
 
 ## Installation
 
 You can install the development version of statgsa from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/GabrielGabes/statgsa) with:
 
 ``` r
 # install.packages("pak")
 pak::pak("GabrielGabes/statgsa")
 #> ℹ Loading metadata database✔ Loading metadata database ... done
 #>  
-#> → Will install 1 package.
-#> → Will download 1 package with unknown size.
-#> + statgsa   0.0.0.9000 [bld][cmp][dl] (GitHub: dfafb62)
-#> ℹ Getting 1 pkg with unknown size
-#> ✔ Got statgsa 0.0.0.9000 (source) (55.42 kB)
-#> ℹ Packaging statgsa 0.0.0.9000
-#> ✔ Packaged statgsa 0.0.0.9000 (895ms)
-#> ℹ Building statgsa 0.0.0.9000
-#> ✔ Built statgsa 0.0.0.9000 (6.4s)
-#> ✔ Installed statgsa 0.0.0.9000 (github::GabrielGabes/statgsa@dfafb62) (82ms)
-#> ✔ 1 pkg + 113 deps: kept 94, added 1, dld 1 (NA B) [15.7s]
+#> ℹ No downloads are needed
+#> ✔ 1 pkg + 113 deps: kept 95 [6.7s]
+```
+
+or
+
+``` r
+# install.packages("remotes")
+# remotes::install_github("GabrielGabes/statgsa")
+# library(statgsa)
+```
+
+## Loading Package
+
+``` r
+library(statgsa)
+```
+
+Also load dependent packages
+
+``` r
+# Package loading facilitator
+if(!require(pacman)) install.packages("pacman")
+#> Carregando pacotes exigidos: pacman
+library(pacman)
+
+# dependents Packages
+pacman::p_load(
+stats,
+rlang,
+dplyr,
+janitor,
+effsize,
+caret,
+DescTools,
+car,
+pROC,
+MuMIn,
+magrittr,
+tidyr
+)
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example that demonstrates how to solve a common problem
+in the analysis of epidemiological study data:
 
-``` r
-# library(statgsa)
-## basic example code
-```
+The dataset from the `MASS` package contains data on 189 births at the
+Baystate Medical Centre, Springfield, Massachusetts during 1986
+(Venables & Ripley, 2002).
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+You can find the data dictionary here:  
+[Data Dictionary for
+birthwt](https://www.rdocumentation.org/packages/MASS/versions/7.3-61/topics/birthwt)
 
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
+### Data Preparation
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
-
-# EU
+Let’s load the dataset and inspect the first few rows:
 
 ``` r
 library(MASS)
+#> 
+#> Anexando pacote: 'MASS'
+#> O seguinte objeto é mascarado por 'package:dplyr':
+#> 
+#>     select
 birthwt = MASS::birthwt
 head(birthwt)
 #>    low age lwt race smoke ptl ht ui ftv  bwt
@@ -79,42 +139,24 @@ head(birthwt)
 #> 91   0  21 124    3     0   0  0  0   0 2622
 ```
 
+Next, we’ll adjust the variable types:
+
 ``` r
-# install.packages("remotes")
-remotes::install_github("GabrielGabes/statgsa")
-#> Using GitHub PAT from the git credential store.
-#> Skipping install of 'statgsa' from a github remote, the SHA1 (dfafb62d) has not changed since last install.
-#>   Use `force = TRUE` to force installation
-library(statgsa)
-#> Warning: substituindo importação prévia 'DescTools::Recode' por 'car::Recode'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'DescTools::RMSE' por 'caret::RMSE'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'DescTools::MAE' por 'caret::MAE'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'car::recode' por 'dplyr::recode'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'magrittr::set_names' por
-#> 'rlang::set_names' quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'pROC::cov' por 'stats::cov' quando
-#> carregando 'statgsa'
-#> Warning: substituindo importação prévia 'dplyr::lag' por 'stats::lag' quando
-#> carregando 'statgsa'
-#> Warning: substituindo importação prévia 'dplyr::filter' por 'stats::filter'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'pROC::smooth' por 'stats::smooth'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'janitor::chisq.test' por
-#> 'stats::chisq.test' quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'lmerTest::step' por 'stats::step'
-#> quando carregando 'statgsa'
-#> Warning: substituindo importação prévia 'pROC::var' por 'stats::var' quando
-#> carregando 'statgsa'
-#> Warning: substituindo importação prévia 'janitor::fisher.test' por
-#> 'stats::fisher.test' quando carregando 'statgsa'
+for (coluna in names(birthwt)){
+  qtd_levels = birthwt[[coluna]] %>% as.factor() %>% levels() %>% length()
+  
+  if (qtd_levels <= 3){
+    birthwt[[coluna]] = birthwt[[coluna]] %>% as.factor()
+  }
+}
 ```
 
-Contagem geral
+## Analysis
+
+The main variable of interest is low birth weight, a binary response
+variable (D. W. Hosmer & Lemeshow, 1989).
+
+### General Count
 
 ``` r
 freq_table(birthwt, 'low')
@@ -123,7 +165,7 @@ freq_table(birthwt, 'low')
 #> 2   1  59  31.22%
 ```
 
-Raça da Mãe vs Habito de Fumar:
+### Mother’s Race vs. Smoking Habit
 
 ``` r
 count_table(birthwt, 'race', 'smoke')
@@ -133,7 +175,10 @@ count_table(birthwt, 'race', 'smoke')
 #> 3        1  39.15 (74) 54.17 (52) 38.46 (10) 17.91 (12)    <NA>        <NA>
 ```
 
-Raça da Mãe vs Idade da mãe
+### Mother’s Race vs. Mother’s Age
+
+We can summarize the age by race using both non-parametric and
+parametric approaches:
 
 ``` r
 summary_num_nonparametric_groups(birthwt, 'age', 'race')
@@ -146,8 +191,10 @@ summary_num_parametric_groups(birthwt, 'age', 'race')
 #> 1      age 23.24 (5.3) 24.29 (5.65) 21.54 (5.11) 22.39 (4.54)    0.01     Anova
 ```
 
-Qual abordagem de analise é a adequada? teste t tem como pressuposto a
-normalidade
+### Determining the Appropriate Analytical Approach
+
+Since the t-test assumes normality, we first check the normality of the
+data:
 
 ``` r
 group_normality_test(birthwt, 'age', 'race')
@@ -157,10 +204,10 @@ group_normality_test(birthwt, 'age', 'race')
 #> 3    3 0.278115618
 ```
 
-o terceiro grupo não contem distribuição normal, portanto uma abordagem
-não parametrica é a mais adequada (median \[IQR\] - Teste de hipotese:
-Mann Whitney) Porém não precisa se preocupar em prestar atenção nisso,
-basta rodar o código abaixo
+The third group does not follow a normal distribution, so a
+non-parametric approach (median \[IQR\] - Hypothesis Test: Mann-Whitney)
+is more appropriate. However, you don’t need to worry about deciding
+this manually—just run the code below:
 
 ``` r
 summary_num_groups(birthwt, 'age', 'race')
@@ -170,91 +217,97 @@ summary_num_groups(birthwt, 'age', 'race')
 #> 1 Kruskal-Wallis
 ```
 
-Analise Univariada
+### Cross Tables - Univariate Analysis
 
 ``` r
 adaptive_cross_table(birthwt, 'low')
 #>    Variable Overall 100% (n=189)   0 68.78% (n=130)      1 31.22% (n=59)
 #> 1       age         23 [19 - 26]       23 [19 - 28]       22 [19.5 - 25]
 #> 2       lwt      121 [110 - 140]  123.5 [113 - 147]      120 [104 - 130]
-#> 3      race            1 [1 - 3]          1 [1 - 3]            2 [1 - 3]
-#> 4     smoke                 <NA>               <NA>                 <NA>
-#> 5         0          60.85 (115)         66.15 (86)           49.15 (29)
-#> 6         1           39.15 (74)         33.85 (44)           50.85 (30)
-#> 7       ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
-#> 8        ht                 <NA>               <NA>                 <NA>
-#> 9         0          93.65 (177)        96.15 (125)           88.14 (52)
-#> 10        1            6.35 (12)          3.85  (5)            11.86 (7)
-#> 11       ui                 <NA>               <NA>                 <NA>
-#> 12        0          85.19 (161)        89.23 (116)           76.27 (45)
-#> 13        1           14.81 (28)         10.77 (14)           23.73 (14)
-#> 14      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
-#> 15      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
+#> 3      race                 <NA>               <NA>                 <NA>
+#> 4         1           50.79 (96)         56.15 (73)           38.98 (23)
+#> 5         2           13.76 (26)         11.54 (15)           18.64 (11)
+#> 6         3           35.45 (67)         32.31 (42)           42.37 (25)
+#> 7     smoke                 <NA>               <NA>                 <NA>
+#> 8         0          60.85 (115)         66.15 (86)           49.15 (29)
+#> 9         1           39.15 (74)         33.85 (44)           50.85 (30)
+#> 10      ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
+#> 11       ht                 <NA>               <NA>                 <NA>
+#> 12        0          93.65 (177)        96.15 (125)           88.14 (52)
+#> 13        1            6.35 (12)          3.85  (5)            11.86 (7)
+#> 14       ui                 <NA>               <NA>                 <NA>
+#> 15        0          85.19 (161)        89.23 (116)           76.27 (45)
+#> 16        1           14.81 (28)         10.77 (14)           23.73 (14)
+#> 17      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
+#> 18      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
 #>    P-value    Test_Used
 #> 1     0.24 Mann-Whitney
 #> 2     0.01 Mann-Whitney
-#> 3    0.051 Mann-Whitney
-#> 4     0.03  Chi-squared
+#> 3     0.08  Chi-squared
+#> 4     <NA>         <NA>
 #> 5     <NA>         <NA>
 #> 6     <NA>         <NA>
-#> 7  < 0.001 Mann-Whitney
-#> 8    0.051 Fisher Exact
+#> 7     0.03  Chi-squared
+#> 8     <NA>         <NA>
 #> 9     <NA>         <NA>
-#> 10    <NA>         <NA>
-#> 11    0.03  Chi-squared
+#> 10 < 0.001 Mann-Whitney
+#> 11   0.051 Fisher Exact
 #> 12    <NA>         <NA>
 #> 13    <NA>         <NA>
-#> 14    0.23 Mann-Whitney
-#> 15 < 0.001 Mann-Whitney
+#> 14    0.03  Chi-squared
+#> 15    <NA>         <NA>
+#> 16    <NA>         <NA>
+#> 17    0.23 Mann-Whitney
+#> 18 < 0.001 Mann-Whitney
 ```
 
-Mudando o sentido da porcentagem
+### Cross Tables - Changing the Percentage Orientation
 
 ``` r
 adaptive_cross_table(birthwt, 'low', 'row')
 #>    Variable Overall 100% (n=189)   0 68.78% (n=130)      1 31.22% (n=59)
 #> 1       age         23 [19 - 26]       23 [19 - 28]       22 [19.5 - 25]
 #> 2       lwt      121 [110 - 140]  123.5 [113 - 147]      120 [104 - 130]
-#> 3      race            1 [1 - 3]          1 [1 - 3]            2 [1 - 3]
-#> 4     smoke                 <NA>               <NA>                 <NA>
-#> 5         0         100.00 (115)         74.78 (86)           25.22 (29)
-#> 6         1          100.00 (74)         59.46 (44)           40.54 (30)
-#> 7       ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
-#> 8        ht                 <NA>               <NA>                 <NA>
-#> 9         0         100.00 (177)        70.62 (125)           29.38 (52)
-#> 10        1          100.00 (12)         41.67  (5)            58.33 (7)
-#> 11       ui                 <NA>               <NA>                 <NA>
-#> 12        0         100.00 (161)        72.05 (116)           27.95 (45)
-#> 13        1          100.00 (28)         50.00 (14)           50.00 (14)
-#> 14      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
-#> 15      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
+#> 3      race                 <NA>               <NA>                 <NA>
+#> 4         1          100.00 (96)         76.04 (73)           23.96 (23)
+#> 5         2          100.00 (26)         57.69 (15)           42.31 (11)
+#> 6         3          100.00 (67)         62.69 (42)           37.31 (25)
+#> 7     smoke                 <NA>               <NA>                 <NA>
+#> 8         0         100.00 (115)         74.78 (86)           25.22 (29)
+#> 9         1          100.00 (74)         59.46 (44)           40.54 (30)
+#> 10      ptl            0 [0 - 0]          0 [0 - 0]            0 [0 - 1]
+#> 11       ht                 <NA>               <NA>                 <NA>
+#> 12        0         100.00 (177)        70.62 (125)           29.38 (52)
+#> 13        1          100.00 (12)         41.67  (5)            58.33 (7)
+#> 14       ui                 <NA>               <NA>                 <NA>
+#> 15        0         100.00 (161)        72.05 (116)           27.95 (45)
+#> 16        1          100.00 (28)         50.00 (14)           50.00 (14)
+#> 17      ftv            0 [0 - 1]          1 [0 - 1]            0 [0 - 1]
+#> 18      bwt   2977 [2414 - 3487] 3267 [2948 - 3651] 2211 [1928 - 2395.5]
 #>    P-value    Test_Used
 #> 1     0.24 Mann-Whitney
 #> 2     0.01 Mann-Whitney
-#> 3    0.051 Mann-Whitney
-#> 4     0.03  Chi-squared
+#> 3     0.08  Chi-squared
+#> 4     <NA>         <NA>
 #> 5     <NA>         <NA>
 #> 6     <NA>         <NA>
-#> 7  < 0.001 Mann-Whitney
-#> 8    0.051 Fisher Exact
+#> 7     0.03  Chi-squared
+#> 8     <NA>         <NA>
 #> 9     <NA>         <NA>
-#> 10    <NA>         <NA>
-#> 11    0.03  Chi-squared
+#> 10 < 0.001 Mann-Whitney
+#> 11   0.051 Fisher Exact
 #> 12    <NA>         <NA>
 #> 13    <NA>         <NA>
-#> 14    0.23 Mann-Whitney
-#> 15 < 0.001 Mann-Whitney
+#> 14    0.03  Chi-squared
+#> 15    <NA>         <NA>
+#> 16    <NA>         <NA>
+#> 17    0.23 Mann-Whitney
+#> 18 < 0.001 Mann-Whitney
 ```
 
-``` r
-for (coluna in names(birthwt)){
-  qtd_levels = birthwt[[coluna]] %>% as.factor() %>% levels() %>% length()
-  
-  if (qtd_levels <= 3){
-    birthwt[[coluna]] = birthwt[[coluna]] %>% as.factor()
-  }
-}
-```
+### Evaluation Metrics for Supervised ML Models
+
+Here’s how to evaluate a logistic regression model:
 
 ``` r
 logit_model <- glm(low ~ age + lwt + race + smoke + ht + ui, data = birthwt, family = binomial)
@@ -281,6 +334,8 @@ univariate_model_analysis(logit_model)
 #> ht1    6.41  1.72  27.01    0.007
 #> ui1    2.45  1.01   5.94     0.04
 ```
+
+And here’s how to evaluate linear regression models:
 
 ``` r
 model1 <- lm(bwt ~ lwt, data = birthwt)
